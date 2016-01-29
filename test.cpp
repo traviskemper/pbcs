@@ -64,7 +64,7 @@ class Lattice{
       //       AA BB Z)/(AC BB CA - AB BC CA - AC BA CB + AA BC CB + 
       //       AB BA CC - AA BB CC)}}
 
-      std::vector<float> f_r (3);
+      std::vector<float> f_r (dim);
 
       //     Set lattice vectors
       float AA = basis[0][0]; //(1,1)
@@ -83,8 +83,8 @@ class Lattice{
       float Z = ri[2] ;
 
       f_r[0] = -((-BC*CB*X+BB*CC*X+BC*CA*Y-BA*CC*Y-BB*CA*Z+BA*CB*Z)/ (AC*BB*CA-AB*BC*CA-AC*BA*CB+AA*BC*CB+AB*BA*CC-AA*BB*CC)) ;
-      f_r[1] =-((AC*CB*X-AB*CC*X-AC*CA*Y+AA*CC*Y+AB*CA*Z-AA*CB*Z)/(AC*BB*CA-AB*BC*CA-AC*BA*CB+AA*BC*CB+AB*BA*CC-AA*BB*CC));
-      f_r[2] =-((-AC*BB*X+AB*BC*X+AC*BA*Y-AA*BC*Y-AB*BA*Z+AA*BB*Z)/(AC*BB*CA-AB*BC*CA-AC*BA*CB+AA*BC*CB+AB*BA*CC-AA*BB*CC));
+      f_r[1] = -((AC*CB*X-AB*CC*X-AC*CA*Y+AA*CC*Y+AB*CA*Z-AA*CB*Z)/(AC*BB*CA-AB*BC*CA-AC*BA*CB+AA*BC*CB+AB*BA*CC-AA*BB*CC));
+      f_r[2] = -((-AC*BB*X+AB*BC*X+AC*BA*Y-AA*BC*Y-AB*BA*Z+AA*BB*Z)/(AC*BB*CA-AB*BC*CA-AC*BA*CB+AA*BC*CB+AB*BA*CC-AA*BB*CC));
 
       return f_r;
     }
