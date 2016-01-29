@@ -7,3 +7,8 @@ f.print_dim() #and you will see "Hello" on the screen
 
 l = Lattice()
 l.print_dim()
+
+r= 2
+
+dim = l.dimensions()
+print "dim ",dim

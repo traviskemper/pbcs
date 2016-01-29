@@ -5,7 +5,9 @@ class Lattice{
     public:
 
     int dim;
-    
+    int ri;
+    int rj;
+
     Lattice(){
         dim = 3;
     }
@@ -14,10 +16,12 @@ class Lattice{
         std::cout << "Hello n = " << std::endl;
         
     }
-    int dimensions(){
-        return dim;
+
+    void position(){
+        std::cout << "Hello n = " << std::endl;
+        
     }
-    
+
     
 };
 
