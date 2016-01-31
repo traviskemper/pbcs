@@ -17,12 +17,6 @@ class Lattice{
         
     }
 
-    void position(){
-        std::cout << "Hello n = " << std::endl;
-        
-    }
-
-    
 };
 
 class Foo{
@@ -46,6 +40,5 @@ extern "C" {
 
     Lattice* Lattice_new(){ return new Lattice(); }
     void Lattice_print_dim(Lattice* lattice){ lattice->print_dim(); }
-    int Lattice_dimensions(Lattice* lattice){ lattice->dimensions(); }
 }
 

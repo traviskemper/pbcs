@@ -7,12 +7,6 @@ class Lattice(object):
     
     def print_dim(self):
         lib.Lattice_print_dim(self.obj)
-    
-    def dimensions(self):
-        return lib.Lattice_dimensions(self.obj)
-
-    def position(self,r):
-        return lib.Lattice_position(self.obj)
 
 class Foo(object):
     def __init__(self):
