@@ -1,3 +1,3 @@
-g++ -c -fPIC pbcs.cpp -o pbcs.o
-g++ -shared  -o libpbcs.so  pbcs.o
-
+make clean
+make
+make tests
