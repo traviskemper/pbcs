@@ -63,13 +63,16 @@ print "%s %s %s"%(tag,command,status)
 test_list.append([tag,command,status.strip()])
 
 
-
-command='pbc_i.set_diagbasis(55.0)'
-tag='set_diagbasis_1'
+command='pbc_i.return_basis()'
+tag='return_basis_2'
 rshift=len(tag)+len(command)
 try:
+    basis_i = pbc_i.return_basis()
     f = open('%s.test'%(tag), 'w')
-    print >> pbc_i.set_diagbasis(55.0)
+    for i in range(pbc_i.lat.d):
+        for j in range(pbc_i.lat.d):
+            f.write(" basis_i %d %d %g  "%(i,j,basis_i[i][j]))
+            
     f.close()
     status='[PASSED]'.rjust(term_width-rshift)
 except:
@@ -78,6 +81,34 @@ if( os.system("diff %s.test %s.out"%(tag,tag)) ):
     status='[FAILED]'.rjust(term_width-rshift) 
 print "%s %s %s"%(tag,command,status)
 test_list.append([tag,command,status.strip()])
+
+
+command='pbc_i.set_basis()'
+tag='set_basis_1'
+rshift=len(tag)+len(command)
+try:
+    basis_i = pbc_i.return_basis()
+    f = open('%s.test'%(tag), 'w')
+    for i in range(pbc_i.lat.d):
+        for j in range(pbc_i.lat.d):
+            f.write(" basis_i %d %d %g  "%(i,j,basis_i[i][j]))
+    basis_i[0,0]=120.0
+    basis_i[1,1]=110.0
+    basis_i[2,2]=130.0
+    pbc_i.set_basis(basis_i)
+    for i in range(pbc_i.lat.d):
+        for j in range(pbc_i.lat.d):
+            f.write(" basis_i %d %d %g  "%(i,j,pbc_i.lat.basis[i][j]))
+    f.close()
+    status='[PASSED]'.rjust(term_width-rshift)
+except:
+    status='[FAILED]'.rjust(term_width-rshift)
+if( os.system("diff %s.test %s.out"%(tag,tag)) ):
+    status='[FAILED]'.rjust(term_width-rshift) 
+print "%s %s %s"%(tag,command,status)
+test_list.append([tag,command,status.strip()])
+
+
 
 command='pbc_i.print_basis()'
 tag='print_basis_2'
@@ -116,6 +147,7 @@ command='pbc_i.return_r(r_i)'
 tag='return_r_1'
 rshift=len(tag)+len(command)
 try:
+    
     r_i = np.array([0.00002324213,324554332.8,53543.7])
     r_j = pbc_i.return_r(r_i)
     print "r_j",r_j
