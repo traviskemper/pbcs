@@ -1,21 +1,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <cmath>
+#include "lattice.cpp"
+#include "position.cpp"
 
 using namespace std;
-
-typedef struct Lattice {
-  int     d;
-  int     Bravais;
-  float     a;
-  float     b;
-  float     c;
-  float     alpha;
-  float     beta;
-  float     gamma;
-  float   basis[3][3];
-  float   fractional[3][3];
-} Lattice;
 
 
 extern "C" {
@@ -78,7 +67,7 @@ extern "C" {
     return frac_r;
   }
 
-  double*  r_ij(Lattice *lat,double* r_i,double* r_j,double* r_ij){
+  double*  delta_r_ij(Lattice *lat,double* r_i,double* r_j,double* r_ij){
     // Set lattice vectors
     float frac_i[3];
     float frac_j[3];
@@ -109,6 +98,9 @@ extern "C" {
     CB = lat->basis[2][1];
     CC = lat->basis[2][2];
 
+    printf("\n in C++ r_ij r_i  %g %g %g ",r_i[0],r_i[1],r_i[2]);
+    printf("\n in C++ r_ij r_j  %g %g %g ",r_j[0],r_j[1],r_j[2]);
+
     for (i = 0; i < lat->d; ++i) {
         X = r_i[0];
         Y = r_i[1];
@@ -128,19 +120,82 @@ extern "C" {
     frac_ij[1] = frac_j[1] - frac_i[1];
     frac_ij[2] = frac_j[2] - frac_i[2];
     
-    printf(" frac_ij  %g %g %g ",frac_ij[0],frac_ij[1],frac_ij[2]);
+    printf("\n frac_ij  %g %g %g ",frac_ij[0],frac_ij[1],frac_ij[2]);
 
 
     frac_ij[0] = frac_ij[0] - round(frac_ij[0]);
     frac_ij[1] = frac_ij[1] - round(frac_ij[1]);
     frac_ij[2] = frac_ij[2] - round(frac_ij[2]);
 
+    printf("\n frac_ij 2 %g %g %g ",frac_ij[0],frac_ij[1],frac_ij[2]);
+
     r_ij[0] = AA*frac_ij[0] + BA*frac_ij[1] + CA*frac_ij[2];
     r_ij[1] = AB*frac_ij[0] + BB*frac_ij[1] + CB*frac_ij[2];
     r_ij[2] = AC*frac_ij[0] + BC*frac_ij[1] + CC*frac_ij[2];
+
     return r_ij;
   }
+
+  double* pos_ij(Lattice *lat, double* npos_i, double* npos_j, int i, int j, double* pos_ij, double* dpos_ij){
+    int n,m,pos_c,dpos_c;
+    double dr_ij;
+    double r_i[3],r_j[3],r_ij[3];
+
+    pos_c = 0 ;
+    dpos_c = 0 ;
+    for (n = 0; n < i*3; n=n+3) {
+      printf("r %f %f %f \n",  npos_i[i], npos_i[i+1], npos_i[i+2]);
+      r_i[0] = npos_i[i];
+      r_i[1] = npos_i[i+1];
+      r_i[2] = npos_i[i+2];
+      for (m = 0; m < j*3; m=m+3) {
+	printf("r %f %f %f \n",  npos_j[i], npos_j[i+1], npos_j[i+2]);
+	r_j[0] = npos_j[i];
+	r_j[1] = npos_j[i+1];
+	r_j[2] = npos_j[i+2];
+	r_ij = delta_r_ij(lat,r_i,r_j,r_ij);
+	pos_ij[pos_c] = r_ij[0];
+	pos_ij[pos_c+1] = r_ij[1];
+	pos_ij[pos_c+2] = r_ij[2];
+	pos_c = pos_c + 3;
+	dpos_ij[pos_c] = sqrt(r_ij[0]*r_ij[0] + r_ij[1]*r_ij[1] + r_ij[2]*r_ij[2]);
+	dpos_c = dpos_c + 1;
+      }
+    }
+    printf("\n");
+    return pos_ij,dpos_ij;
         
+   }
+
+  double* set_r_array(Lattice *lat, double* npos_i, int n){
+    int i;
+
+    cout << " n = " << n << endl;
+    cout << " in set_r_array  sizeof((npos_i))  = "<< sizeof((npos_i))   << endl;
+    cout << " in set_r_array  sizeof((npos_i[0]))  = "<< sizeof((npos_i[0]))   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[0]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[1]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[2]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[3]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[4]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[5]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[6]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[7]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[8]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[9]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[10]   << endl;
+    cout << " in set_r_array  npos_i[0]   = "<< npos_i[11]   << endl;
+
+    for (i = 0; i < n*3; i=i+3) {
+      cout << " i = " << i << endl;
+      //cout << " in set_r_array ri = "<< npos_i[0][0] << endl;
+      printf("r %f %f %f \n",  npos_i[i], npos_i[i+1], npos_i[i+2]);
+    }
+    printf("\n");
+    return npos_i;
+        
+   }
+            
   void print_fractional(Lattice *lat) {
     int i,j;
     for (i = 0; i < lat->d; ++i) {
