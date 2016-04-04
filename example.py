@@ -11,29 +11,48 @@ pbc_i.print_basis()
 
 # Get lattice vectors (basis) from defualt initializization
 basis_i = pbc_i.return_basis()
-print "basis_i",basis_i
+print "  basis_i ",basis_i
+
+# Create points  and pass to PBC to test numpy passing and returning 
+r_i = np.array([25.0,25.0,25.0], dtype='float64')
+r_j = np.array([-125.0,-125.0,-125.0], dtype='float64')
+dr_ij = pbc_i.r_ij(r_i,r_j)
 
 # Set local basis to new values
 basis_i[0,0]=120.0
 basis_i[1,1]=110.0
 basis_i[2,2]=130.0
 
-
-
 # Set lattice vectors to new values 
 print "basis_i",basis_i
 pbc_i.set_basis(basis_i)
-
-# Print lattice vectors
-pbc_i.print_basis()
 
 # Find Bravais lattice type 1-7 
 Bravais_numb = pbc_i.find_Bravais()
 print "Bravais_numb ",Bravais_numb
 print "Bravais  ",pbc_i.return_Bravais()
 
-# Create point and pass to PBC to test numpy passing and returning 
-r_i = np.array([140.00002324213,54332.8,53543.7], dtype='float64')
+# Print lattice vectors
+pbc_i.print_basis()
+
+# Create point and pass to PBC to test numpy passing and returning
+npos_i = []
+r_i = np.array([140.00002324213,54332.8,53.7], dtype='float64')
+npos_i.append( r_i )
+r_i = np.array([3.13,9234.431,234.023084], dtype='float64')
+npos_i.append( r_i )
+r_i = np.array([234.234,324.431,974.023084], dtype='float64')
+npos_i.append( r_i )
+r_i = np.array([12.13,667.431,10.023084], dtype='float64')
+npos_i.append( r_i )
+npos_i = np.array(npos_i)
+print "npos_i",npos_i
+print "len(npos_i)",len(npos_i)
+
+npos_j = pbc_i.set_r_array(npos_i)
+
+sys.exit('adf')
+
 r_k = pbc_i.return_r(r_i)
 print "r_k ",r_k
 print "r_i ",r_i
