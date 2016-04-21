@@ -15,16 +15,11 @@ print pbc_i.pass_lat()
 # Print lattice vectors 
 pbc_i.print_basis()
 
-sys.exit(" testing 1")
-
 # Get lattice vectors (basis) from defualt initializization
 basis_i = pbc_i.return_basis()
 print "  basis_i ",basis_i
 
-# Create points  and pass to PBC to test numpy passing and returning 
-r_i = np.array([25.0,25.0,25.0], dtype='float64')
-r_j = np.array([-125.0,-125.0,-125.0], dtype='float64')
-dr_ij = pbc_i.r_ij(r_i,r_j)
+
 
 # Set local basis to new values
 basis_i[0,0]=120.0
@@ -43,6 +38,32 @@ print "Bravais  ",pbc_i.return_Bravais()
 # Print lattice vectors
 pbc_i.print_basis()
 
+# Test
+npos_i = []
+npos_i.append(np.array([25.0,25.0,25.0], dtype='float64'))
+npos_i.append(np.array([-125.0,-125.0,-125.0], dtype='float64'))
+npos_i.append(np.array([-15.0,35.0,-5.0], dtype='float64'))
+
+pos_j = np.array([25.0,25.0,25.0], dtype='float64')
+
+pbc_i.shift_npos(npos_i,pos_j)
+
+
+
+npos_j = []
+npos_j.append(np.array([5.0,75.0,25.0], dtype='float64'))
+npos_j.append(np.array([-10.0,-15.0,0.0], dtype='float64'))
+npos_j.append(np.array([-25.0,-90.0,-45.0], dtype='float64'))
+
+npos_ij,nd_ij = pbc_i.delta_npos(npos_i,npos_j)
+
+for n in range(len(npos_ij)):
+    pos_i = npos_ij[n]
+    print " pos_i %d  [ %f %f %f ] |%f| "%(n,pos_i[0],pos_i[1],pos_i[2],nd_ij[n])
+
+sys.exit(" testing 1")
+
+
 # Create point and pass to PBC to test numpy passing and returning
 npos_i = []
 r_i = np.array([140.00002324213,54332.8,53.7], dtype='float64')
@@ -56,8 +77,14 @@ npos_i.append( r_i )
 npos_i = np.array(npos_i)
 print "npos_i",npos_i
 print "len(npos_i)",len(npos_i)
+npos_j = pbc_i.pass_npos(npos_i)
 
-npos_j = pbc_i.set_r_array(npos_i)
+
+# Create points  and pass to PBC to test numpy passing and returning 
+r_i = np.array([25.0,25.0,25.0], dtype='float64')
+r_j = np.array([-125.0,-125.0,-125.0], dtype='float64')
+dr_ij = pbc_i.r_ij(r_i,r_j)
+
 
 sys.exit('adf')
 

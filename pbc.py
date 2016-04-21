@@ -147,6 +147,53 @@ class PBC():
     def return_basis(self):
         return  np.array(self.lat.basis)
 
+         
+    def delta_npos(self,npos_i,npos_j):
+        """
+        Difference between two position in box 
+        """
+
+        npos_i_c = []
+        for pos_i in npos_i:
+            for r_i in pos_i:
+                npos_i_c.append(r_i)
+        npos_i_c = np.array(npos_i_c,dtype='float64')
+                
+        npos_j_c = []
+        for pos_j in npos_j:
+            for r_j in pos_j:
+                npos_j_c.append(r_j)
+        npos_j_c = np.array(npos_j_c,dtype='float64')
+
+        print "npos_i_c",npos_i_c
+        print "npos_j_c",npos_j_c
+
+        n_i = len(npos_i)
+        n_i_c = c_int(n_i)
+        n_j = len(npos_j)
+        n_j_c = c_int(n_j)
+
+        n_ij = len(npos_i_c)*len(npos_j_c)
+        n_ij_c = c_int(n_ij)
+
+        npos_ij_c = np.empty(n_ij*3,dtype='float64')
+        nd_ij_c = np.empty(n_ij,dtype='float64')
+        
+        lib.delta_npos.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double,shape=(n_i*3,)),c_int,ndpointer(dtype=c_double,shape=(n_j*3,)),c_int,ndpointer(dtype=c_double,shape=(n_ij*3,)),ndpointer(dtype=c_double,shape=(n_ij,))]
+        lib.delta_npos.restype =  None #[ndpointer(dtype=c_double,shape=(ij_c,)),ndpointer(dtype=c_double,shape=(ij_c,))]
+        lib.delta_npos(byref(self.lat),npos_i_c,n_i_c,npos_j_c,n_j_c,npos_ij_c,nd_ij_c)
+        print " delta_npos finished "
+        # print "npos_ij_c ",npos_ij_c 
+        # Return 1D to 2D array of positions
+        npos_ij  = [] 
+        for n in range(0,n_ij*3,3):
+            print " n ",n
+            pos_ij = np.array([npos_ij_c[n],npos_ij_c[n+1],npos_ij_c[n+2]])
+            print "pos_ij ",n,pos_ij
+            npos_ij.append(pos_ij)
+        print "n_ij ",n_ij 
+        
+        return  npos_ij,nd_ij_c
 
 
     def call_pbc(self):
@@ -169,6 +216,26 @@ class PBC():
 
 
 
+
+    def shift_npos(self,npos_i,pos_j):
+        """
+        Shift set of positions npos_i by a vector pos_j 
+        """
+        npos_i_c = []
+        for pos_i in npos_i:
+            for r_i in pos_i:
+                npos_i_c.append(r_i)
+        npos_i_c = np.array(npos_i_c,dtype='float64')
+        pos_j = np.array(pos_j,dtype='float64')
+
+        n = c_int(len(npos_i))
+
+        npos_j_c = np.zeros(len(npos_i_c))
+        #lib.r_ij.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double, shape=(len(r_i),)), ndpointer(dtype=c_double, shape=(len(r_j),)),ndpointer(dtype=c_double, shape=(len(r_ij),))]
+        #lib.r_ij.restype = ndpointer(dtype=c_double, shape=(len(r_ij),))
+        lib.shift_npos.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double,shape=(len(npos_i_c),)),c_int]
+        return  lib.shift_npos(byref(self.lat),npos_i_c,n)
+
     def r_ij(self,r_i,r_j):
         """
         Difference between two position in box 
@@ -178,20 +245,6 @@ class PBC():
         lib.r_ij.restype = ndpointer(dtype=c_double, shape=(len(r_ij),))
         return  lib.r_ij(byref(self.lat),r_i,r_j,r_ij)
 
-
-    def set_r_array(self,npos_i ):
-
-        n = c_int(len(npos_i))
-
-        print  len(npos_i), len(npos_i[0])
-        npos_i = np.array(npos_i)
-        #npos_i = np.zeros((4,3), dtype='float64')
-
-        print npos_i
-
-        lib.set_r_array.argtypes = [POINTER(Lattice), ndpointer( dtype=c_double,flags='C', shape=( 4,3 ) ),c_int ]
-        lib.set_r_array.restype =  None # ndpointer( dtype=c_double, shape=( len(npos_i), len(npos_i[0])) )
-        return lib.set_r_array(byref(self.lat),npos_i,n)
 
 
 
