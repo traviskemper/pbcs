@@ -134,8 +134,6 @@ def main():
         npos_j.append(np.array([-10.0,-15.0,0.0], dtype='float64'))
         npos_j.append(np.array([-25.0,-90.0,-45.0], dtype='float64'))
         npos_ij,nd_ij = pbc_i.delta_npos(npos_i,npos_j)
-
-        print "len(npos_i)",len(npos_i)
         
         f = open('%s.test'%(tag), 'w')
         for n in range(len(npos_i)):
