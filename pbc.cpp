@@ -141,13 +141,6 @@ public:
         }
     }
     
-  void call_pbc2(){
-    printf("call_pbc works in PBC class \n");    
-  }
-  void pass_lat2(Lattice* lat){
-    printf("pass_lat2 works in PBC class \n");    
-  }
-
   void print_basis(Lattice *lat) {
     int i,j;
     printf(" Dimensions = %d \n",lat->d);
@@ -167,23 +160,5 @@ public:
       printf("\n");
     }
   }
-
-  void shift_npos(Lattice *lat, double* npos_i, int n){
-    printf("n = %d ", n);    
-
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[0]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[1]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[2]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[3]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[4]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[5]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[6]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[7]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[8]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[9]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[10]   << endl;
-    cout << " in shift_npos  npos_i[0]   = "<< npos_i[11]   << endl;
-
-  }  
-    
+ 
 };
