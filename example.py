@@ -6,8 +6,16 @@ from pbc import PBC
 # Initialize periodic boundry condition object
 pbc_i = PBC()
 
+# Test call c++ 
+print pbc_i.call_pbc()
+# Test passing lattice
+print pbc_i.pass_lat()
+
+
 # Print lattice vectors 
 pbc_i.print_basis()
+
+sys.exit(" testing 1")
 
 # Get lattice vectors (basis) from defualt initializization
 basis_i = pbc_i.return_basis()

@@ -139,5 +139,12 @@ public:
         }
     }
     
+  void call_pbc2(){
+    printf("call_pbc works in PBC class \n");    
+  }
+  void pass_lat2(Lattice* lat){
+    printf("pass_lat2 works in PBC class \n");    
+  }
+  
     
 };

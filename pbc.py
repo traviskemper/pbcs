@@ -147,6 +147,28 @@ class PBC():
     def return_basis(self):
         return  np.array(self.lat.basis)
 
+
+
+    def call_pbc(self):
+        '''
+        Test function 
+        '''
+        lib.call_pbc.argtypes = None
+        lib.call_pbc.restypes = None 
+        lib.call_pbc()
+        
+
+    def pass_lat(self):
+        '''
+        Test function 
+        '''
+        lib.pass_lat.argtypes = [POINTER(Lattice)]
+        lib.pass_lat.restypes = None 
+        lib.pass_lat(byref(self.lat))
+        
+
+
+
     def r_ij(self,r_i,r_j):
         """
         Difference between two position in box 
