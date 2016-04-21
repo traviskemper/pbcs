@@ -1,5 +1,6 @@
 #include <math.h>       /* sqrt */
 #include <cmath>
+#include <string>
 
 #include <stdio.h>
 #include <iostream>
@@ -110,16 +111,16 @@ public:
         
         o = 0;
         p = 0;
-	printf("delta_npos %d \n",lat->d);
-	printf("delta_npos n_i %d \n",n_i);
-	printf("delta_npos n_j %d \n",n_j);
+	//printf("delta_npos %d \n",lat->d);
+	//printf("delta_npos n_i %d \n",n_i);
+	//printf("delta_npos n_j %d \n",n_j);
         for (m = 0; m < n_i*3; m=m+3) {
             pos_i[0] = npos_i[m+0];
             pos_i[1] = npos_i[m+1];
             pos_i[2] = npos_i[m+2];
             for (n = 0; n < n_j*3; n=n+3) {
-	        printf("delta_npos pos_i (%d)  %f %f %f  \n", m , npos_i[m+0], npos_i[m+1], npos_i[m+2]);
-                printf("delta_npos pos_j (%d)  %f %f %f  \n", n, npos_j[n+0], npos_j[n+1], npos_j[n+2]);
+	        //printf("delta_npos pos_i (%d)  %f %f %f  \n", m , npos_i[m+0], npos_i[m+1], npos_i[m+2]);
+                //printf("delta_npos pos_j (%d)  %f %f %f  \n", n, npos_j[n+0], npos_j[n+1], npos_j[n+2]);
                 pos_j[0] = npos_j[n+0];
                 pos_j[1] = npos_j[n+1];
                 pos_j[2] = npos_j[n+2];
@@ -132,10 +133,10 @@ public:
                 npos_ij[o+0] = d_r_ij[0]; //npos_j[n+0] - npos_i[m+0];
                 npos_ij[o+1] = d_r_ij[1]; //npos_j[n+1] - npos_i[m+1];
                 npos_ij[o+2] = d_r_ij[2]; //npos_j[n+2] - npos_i[m+2];
-                printf("delta_npos d_r_ij  %f %f %f  \n", d_r_ij[0],d_r_ij[1],d_r_ij[2]);
+                //printf("delta_npos d_r_ij  %f %f %f  \n", d_r_ij[0],d_r_ij[1],d_r_ij[2]);
                 o = o + 3;
                 nd_ij[p] = mag_pos(lat, d_r_ij,nd_ij[p]);
-                printf("delta_npos nd_ij  %f \n", nd_ij[p] );
+                //printf("delta_npos nd_ij  %f \n", nd_ij[p] );
                 p = p + 1;
             }
         }
@@ -154,6 +155,7 @@ public:
     printf("\n");
 
     for (i = 0; i < lat->d; ++i) {
+      printf("basis %d = ",i+1);
       for (j = 0; j < lat->d; ++j) {
 	printf("%g ", lat->basis[j][i]);
       }

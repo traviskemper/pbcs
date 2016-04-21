@@ -147,6 +147,27 @@ class PBC():
     def return_basis(self):
         return  np.array(self.lat.basis)
 
+
+
+    def print_basis(self):
+        
+        lib.print_basis.argtypes = [POINTER(Lattice)]
+        lib.print_basis.restype = None
+        
+        return lib.print_basis(byref(self.lat))
+  
+    def delta_rij_t(self,r_i,r_j):
+        """
+        Difference between two position in tetragonal box 
+        """
+
+        r_ij  = r_j - r_i    
+
+        r_x = r_ij[0] - self.latvec[0][0] * round( r_ij[0]/  self.latvec[0][0] )
+        r_y = r_ij[1] - self.latvec[1][1] * round( r_ij[1]/  self.latvec[1][1] )
+        r_z = r_ij[2] - self.latvec[2][2] * round( r_ij[2]/  self.latvec[2][2] )
+
+        return np.array( [r_x,r_y,r_z] )
          
     def delta_npos(self,npos_i,npos_j):
         """
@@ -165,174 +186,25 @@ class PBC():
                 npos_j_c.append(r_j)
         npos_j_c = np.array(npos_j_c,dtype='float64')
 
-        print "npos_i_c",npos_i_c
-        print "npos_j_c",npos_j_c
-
         n_i = len(npos_i)
         n_i_c = c_int(n_i)
         n_j = len(npos_j)
         n_j_c = c_int(n_j)
 
-        n_ij = len(npos_i_c)*len(npos_j_c)
+        n_ij = n_i*n_j
         n_ij_c = c_int(n_ij)
 
         npos_ij_c = np.empty(n_ij*3,dtype='float64')
         nd_ij_c = np.empty(n_ij,dtype='float64')
-        
+
         lib.delta_npos.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double,shape=(n_i*3,)),c_int,ndpointer(dtype=c_double,shape=(n_j*3,)),c_int,ndpointer(dtype=c_double,shape=(n_ij*3,)),ndpointer(dtype=c_double,shape=(n_ij,))]
         lib.delta_npos.restype =  None #[ndpointer(dtype=c_double,shape=(ij_c,)),ndpointer(dtype=c_double,shape=(ij_c,))]
         lib.delta_npos(byref(self.lat),npos_i_c,n_i_c,npos_j_c,n_j_c,npos_ij_c,nd_ij_c)
-        print " delta_npos finished "
-        # print "npos_ij_c ",npos_ij_c 
         # Return 1D to 2D array of positions
         npos_ij  = [] 
         for n in range(0,n_ij*3,3):
-            print " n ",n
             pos_ij = np.array([npos_ij_c[n],npos_ij_c[n+1],npos_ij_c[n+2]])
-            print "pos_ij ",n,pos_ij
             npos_ij.append(pos_ij)
-        print "n_ij ",n_ij 
         
         return  npos_ij,nd_ij_c
 
-
-    def call_pbc(self):
-        '''
-        Test function 
-        '''
-        lib.call_pbc.argtypes = None
-        lib.call_pbc.restypes = None 
-        lib.call_pbc()
-        
-
-    def pass_lat(self):
-        '''
-        Test function 
-        '''
-        lib.pass_lat.argtypes = [POINTER(Lattice)]
-        lib.pass_lat.restypes = None 
-        lib.pass_lat(byref(self.lat))
-        
-
-
-
-
-    def shift_npos(self,npos_i,pos_j):
-        """
-        Shift set of positions npos_i by a vector pos_j 
-        """
-        npos_i_c = []
-        for pos_i in npos_i:
-            for r_i in pos_i:
-                npos_i_c.append(r_i)
-        npos_i_c = np.array(npos_i_c,dtype='float64')
-        pos_j = np.array(pos_j,dtype='float64')
-
-        n = c_int(len(npos_i))
-
-        npos_j_c = np.zeros(len(npos_i_c))
-        #lib.r_ij.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double, shape=(len(r_i),)), ndpointer(dtype=c_double, shape=(len(r_j),)),ndpointer(dtype=c_double, shape=(len(r_ij),))]
-        #lib.r_ij.restype = ndpointer(dtype=c_double, shape=(len(r_ij),))
-        lib.shift_npos.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double,shape=(len(npos_i_c),)),c_int]
-        return  lib.shift_npos(byref(self.lat),npos_i_c,n)
-
-    def r_ij(self,r_i,r_j):
-        """
-        Difference between two position in box 
-        """
-        r_ij = np.zeros(len(r_i))
-        lib.r_ij.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double, shape=(len(r_i),)), ndpointer(dtype=c_double, shape=(len(r_j),)),ndpointer(dtype=c_double, shape=(len(r_ij),))]
-        lib.r_ij.restype = ndpointer(dtype=c_double, shape=(len(r_ij),))
-        return  lib.r_ij(byref(self.lat),r_i,r_j,r_ij)
-
-
-
-
-
-    def pos_ij(self,pos_i,pos_j):
-
-        i = c_int(len(pos_i))
-        j = c_int(len(pos_j))
-
-        npos_i = np.array(npos_i)
-        pos_ij = np.zeros((i*j,3), dtype='float64')
-        d_ij  = np.zeros((i*j*3), dtype='float64')
-        
-        lib.pos_ij.argtypes = [POINTER(Lattice), ndpointer( dtype=c_double,flags='C', shape=( 4,3 ) ),c_int ]
-        lib.pos_ij.restype =  None # ndpointer( dtype=c_double, shape=( len(npos_i), len(npos_i[0])) )
-        pos_ij,dpos_ij =  lib.pos_ij(byref(self.lat),npos_i,n)
-
-        return  pos_ij,dpos_ij
-        
-
-
-
-    def calc_fractional(self,r_i,frac_i):
-        lib.calc_fractional.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double, shape=(len(r_i),)),ndpointer(dtype=c_double, shape=(len(frac_i),))]
-        lib.calc_fractional.restype = ndpointer(dtype=c_double, shape=(len(frac_i),))
-        return  lib.calc_fractional(byref(self.lat),r_i,frac_i)
-    
-    def print_basis(self):
-        
-        lib.print_basis.argtypes = [POINTER(Lattice)]
-        lib.print_basis.restype = None
-        
-        lib.print_basis(byref(self.lat))
-  
-    def delta_r(self,r_i,r_j):
-        lib.delta_r.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double, shape=(len(r_i),)),ndpointer(dtype=c_double, shape=(len(r_j),))]
-        lib.delta_r.restype = ndpointer(dtype=c_double, shape=(len(r_i),))
-        return lib.delta_r(byref(self.lat),r_i,r_j)
-
-    def delta_rij_t(self,r_i,r_j):
-        """
-        Difference between two position in tetragonal box 
-        """
-
-        r_ij  = r_j - r_i    
-
-        r_x = r_ij[0] - self.latvec[0][0] * round( r_ij[0]/  self.latvec[0][0] )
-        r_y = r_ij[1] - self.latvec[1][1] * round( r_ij[1]/  self.latvec[1][1] )
-        r_z = r_ij[2] - self.latvec[2][2] * round( r_ij[2]/  self.latvec[2][2] )
-
-        return np.array( [r_x,r_y,r_z] )
-
-    def delta_rij_r(self,r_i,r_j):
-        """
-        Difference between two position in tetragonal box 
-        """
-
-        r_ij  = r_j - r_i    
-
-        r_x = r_ij[0] - self.latvec[0][0] * round( r_ij[0]/  self.latvec[0][0] )
-        r_y = r_ij[1] - self.latvec[1][1] * round( r_ij[1]/  self.latvec[1][1] )
-        r_z = r_ij[2] - self.latvec[2][2] * round( r_ij[2]/  self.latvec[2][2] )
-
-        return np.array( [r_x,r_y,r_z] )
-             
-    def print_fractional(self):
-        
-        lib.print_basis.argtypes = [POINTER(Lattice)]
-        lib.print_basis.restype = None
-        
-        lib.print_fractional(byref(self.lat))
-
-    def print_r(self,r_i):
-        ri = (c_double * len(r_i))()
-        for i in range(len(r_i)):
-            ri[i] = r_i[i]
-
-        lib.print_basis.argtypes = [ndpointer(dtype=c_double, shape=(len(r_i),))]
-        lib.print_basis.restype = None
-        
-        lib.print_r(byref(ri))
-            
-        # lib.PBC_print_r.restype = ndpointer(dtype=ctypes.c_double, shape=(len(r_i),))
-        # lib.PBC_print_r(self.obj,ri)
-    
-
-    def return_r(self,r_i):
-        lib.return_r.argtypes = [ndpointer(dtype=c_double, shape=(len(r_i),))]
-        lib.return_r.restype = ndpointer(dtype=c_double, shape=(len(r_i),))
-        return lib.return_r(r_i)
-    
