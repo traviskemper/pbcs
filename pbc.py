@@ -113,9 +113,6 @@ class PBC():
             return "Triclinic"
         
     
-    def return_basis(self):
-        return  np.array(self.lat.basis)
-
     def set_basis(self,basis_i):
         '''
         
@@ -146,6 +143,9 @@ class PBC():
         self.lat.gamma = getAngle(self.lat.basis[0],self.lat.basis[1])
         self.lat.alpha = getAngle(self.lat.basis[1],self.lat.basis[2])
         self.lat.beta  = getAngle(self.lat.basis[0],self.lat.basis[2])        
+
+    def return_basis(self):
+        return  np.array(self.lat.basis)
 
     def r_ij(self,r_i,r_j):
         """

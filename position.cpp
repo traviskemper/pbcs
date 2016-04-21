@@ -19,11 +19,11 @@ typedef struct Lattice {
     double   basis[3][3];
 } Lattice;
 
-class Position{
+class PBC{
     
 public:
     
-    Position(){
+    PBC(){
         
     }
     

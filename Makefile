@@ -3,8 +3,8 @@ CFLAGS=-c -fPIC
 
 all: pbc.o libpbc.so
 
-pbc.o: pbc.cpp
-	$(CC) $(CFLAGS) pbc.cpp -o pbc.o
+pbc.o: wrapper.cpp
+	$(CC) $(CFLAGS) wrapper.cpp -o pbc.o
 
 libpbc.so: pbc.o
 	$(CC) -shared  -o libpbc.so  pbc.o

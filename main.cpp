@@ -8,19 +8,27 @@
 
 #include "main.h"
 
-#include <stdio.h>
-#include <iostream>
-#include <cmath>
 #include "position.cpp"
 
-using namespace std;
 
 int main(int argc, const char * argv[])
 {
     printf(" new system \n");
+    int i,j,n,m,o,ij  ;
+    
+    Lattice *lat = new Lattice() ;
+    lat->d = 1;
+    for (m = 0;m < 3; m=m+1) {
+        for (n = 0; n < 3; n=n+1) {
+            lat->basis[0][0] = 0.0;
+        }
+    }
+    lat->basis[0][0] = 110.0;
+    lat->basis[1][1] = 110.0;
+    lat->basis[2][2] = 110.0;
+    
     Position *position = new Position() ;
     
-    int i,j,n,m,o,ij  ;
     i = 4 ;
     j = 4 ;
     ij = i*j;
@@ -38,9 +46,10 @@ int main(int argc, const char * argv[])
         npos_j[m] = 8.0 ;
         npos_j[m+1] = 9.0 ;
         npos_j[m+2] = 10.0 ;
-        
     }
-    position->delta_npos(npos_i,i,npos_j,j,npos_ij);
+    
+    double nd_ij[ij];
+    position->delta_npos(lat, npos_i,i,npos_j,j,npos_ij,nd_ij);
     
     for (m = 0; m < i*3; m=m+3) {
         printf("main npos_i (%d)  %f %f %f  \n", m , npos_i[m+0], npos_i[m+1], npos_i[m+2]);
@@ -48,6 +57,11 @@ int main(int argc, const char * argv[])
     for (o = 0; o < ij*3; o=o+3) {
         printf("mian npos_ij (%d)  %f %f %f  \n", o, npos_ij[o+0], npos_ij[o+1], npos_ij[o+2]);
     }
+    
+    for (o=0; o < ij; o=o+1){
+        printf("mian nd_ij (%d)  %f \n", o, nd_ij[o] );
+    }
+    
     printf("  \n");
     double d_r_ij[3];
     double pos_i[3];
@@ -59,9 +73,9 @@ int main(int argc, const char * argv[])
     pos_j[1] = 23.5 ;
     pos_j[2] = -9.5 ;
     
-    position->delta_pos(pos_i,pos_j,d_r_ij);
+    position->delta_pos_c(lat, pos_i,pos_j,d_r_ij);
     printf("mian d_r  %f %f %f  \n", d_r_ij[0], d_r_ij[1], d_r_ij[2]);
-    
+        
     return 0;
 }
 
