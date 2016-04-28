@@ -200,11 +200,22 @@ class PBC():
         lib.delta_npos.argtypes = [POINTER(Lattice),ndpointer(dtype=c_double,shape=(n_i*3,)),c_int,ndpointer(dtype=c_double,shape=(n_j*3,)),c_int,ndpointer(dtype=c_double,shape=(n_ij*3,)),ndpointer(dtype=c_double,shape=(n_ij,))]
         lib.delta_npos.restype =  None #[ndpointer(dtype=c_double,shape=(ij_c,)),ndpointer(dtype=c_double,shape=(ij_c,))]
         lib.delta_npos(byref(self.lat),npos_i_c,n_i_c,npos_j_c,n_j_c,npos_ij_c,nd_ij_c)
-        # Return 1D to 2D array of positions
-        npos_ij  = [] 
+        # Return 1D array N*3 of positions to Nx3 array of positions
+        npos_ij_one = []        
         for n in range(0,n_ij*3,3):
             pos_ij = np.array([npos_ij_c[n],npos_ij_c[n+1],npos_ij_c[n+2]])
-            npos_ij.append(pos_ij)
-        
-        return  npos_ij,nd_ij_c
+            npos_ij_one.append(pos_ij)
+        # Transform 1D array of positions and lengths to n_i x n_j 2D array 
+        npos_ij  = []
+        nd_ij  = []
+        l = 0
+        for m in range(n_i):
+            npos_ij.append([])
+            nd_ij.append([])
+            for n in range(n_j):
+                npos_ij[m].append(npos_ij_one[l])
+                nd_ij[m].append(nd_ij_c[l])
+                l += 1
+                
+        return  npos_ij,nd_ij
 

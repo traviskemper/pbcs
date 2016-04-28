@@ -15,7 +15,6 @@ def main():
 
     test_list = []
 
-
     command='import numpy as np'
     tag='importnumpy'
     rshift=len(tag)+len(command)
@@ -64,7 +63,7 @@ def main():
         status='[PASSED]'.rjust(term_width-rshift)
     except:
         status='[FAILED]'.rjust(term_width-rshift)
-    if( os.system("diff %s.test %s.out"%(tag,tag)) ):
+    if( os.system("diff %s.test %s.ref"%(tag,tag)) ):
         status='[FAILED]'.rjust(term_width-rshift) 
     print "%s %s %s"%(tag,command,status)
     test_list.append([tag,command,status.strip()])
@@ -96,7 +95,7 @@ def main():
         status='[PASSED]'.rjust(term_width-rshift)
     except:
         status='[FAILED]'.rjust(term_width-rshift)
-    if( os.system("diff %s.test %s.out"%(tag,tag)) ):
+    if( os.system("diff %s.test %s.ref"%(tag,tag)) ):
         status='[FAILED]'.rjust(term_width-rshift) 
     print "%s %s %s"%(tag,command,status)
     test_list.append([tag,command,status.strip()])
@@ -114,7 +113,7 @@ def main():
         status='[PASSED]'.rjust(term_width-rshift)
     except:
         status='[FAILED]'.rjust(term_width-rshift)
-    if( os.system("diff %s.test %s.out"%(tag,tag)) ):
+    if( os.system("diff %s.test %s.ref"%(tag,tag)) ):
         status='[FAILED]'.rjust(term_width-rshift) 
     print "%s %s %s"%(tag,command,status)
     test_list.append([tag,command,status.strip()])
@@ -126,15 +125,17 @@ def main():
     try:
 
         npos_i = []
-        npos_i.append(np.array([25.0,25.0,25.0], dtype='float64'))
-        npos_i.append(np.array([-125.0,-125.0,-125.0], dtype='float64'))
-        npos_i.append(np.array([-15.0,35.0,-5.0], dtype='float64'))
+        npos_i.append(np.array([75.0,95.0,15.0], dtype='float64'))
+        npos_i.append(np.array([-85.0,75.0,25.0], dtype='float64'))
+        npos_i.append(np.array([-96.0,-68.0,33.0], dtype='float64'))
+        npos_i.append(np.array([-85.0,-38.0,-78.0], dtype='float64'))
         npos_j = []
-        npos_j.append(np.array([5.0,75.0,25.0], dtype='float64'))
-        npos_j.append(np.array([-10.0,-15.0,0.0], dtype='float64'))
-        npos_j.append(np.array([-25.0,-90.0,-45.0], dtype='float64'))
+        npos_j.append(np.array([-101.0,-152.0,-45.0], dtype='float64'))
+        npos_j.append(np.array([-64.0,-32.0,131.0], dtype='float64'))
+        npos_j.append(np.array([-48.0,377.0,77.0], dtype='float64'))
+        npos_j.append(np.array([12.0,152.0,45.0], dtype='float64'))
         npos_ij,nd_ij = pbc_i.delta_npos(npos_i,npos_j)
-        
+
         f = open('%s.test'%(tag), 'w')
         for n in range(len(npos_i)):
             pos_i = npos_i[n]
@@ -142,122 +143,127 @@ def main():
         for n in range(len(npos_j)):
             pos_j = npos_j[n]
             f.write(" pos_j %d  [ %f %f %f ]  \n"%(n+1,pos_j[0],pos_j[1],pos_j[2]))
-            
-        for n in range(len(npos_ij)):
-            pos_ij = npos_ij[n]
-            f.write(" pos_ij %d  [ %f %f %f ] | %f | \n"%(n+1,pos_ij[0],pos_ij[1],pos_ij[2],nd_ij[n]))
+
+        for n in range(len(npos_i)):
+            for m in range(len(npos_j)):
+                pos_ij = npos_ij[n][m]
+                f.write(" pos_ij %d %d [ %f %f %f ] | %f | \n"%(n+1,m+1,pos_ij[0],pos_ij[1],pos_ij[2],nd_ij[n][m]))
         f.close()
         status='[PASSED]'.rjust(term_width-rshift)
     except:
         status='[FAILED]'.rjust(term_width-rshift)
-    if( os.system("diff %s.test %s.out"%(tag,tag)) ):
+    if( os.system("diff %s.test %s.ref"%(tag,tag)) ):
         status='[FAILED]'.rjust(term_width-rshift) 
     print "%s %s %s"%(tag,command,status)
     test_list.append([tag,command,status.strip()])
 
 
-    sys.exit(" test set 1")
-
-
-    command='pbc_i.print_basis()'
-    tag='print_basis_1'
-    rshift=len(tag)+len(command)
-    try:
-        f = open('%s.test'%(tag), 'w')
-        lat_string = pbc_i.print_basis()
-        print "lat_string ",lat_string
-        f.close()
-        status='[PASSED]'.rjust(term_width-rshift)
-    except:
-        status='[FAILED]'.rjust(term_width-rshift)
-    if( os.system("diff %s.test %s.out"%(tag,tag)) ):
-        status='[FAILED]'.rjust(term_width-rshift) 
-    print "%s %s %s"%(tag,command,status)
-    test_list.append([tag,command,status.strip()])
-
-
-
-
-
-    command='pbc_i.print_basis()'
-    tag='print_basis_2'
-    rshift=len(tag)+len(command)
-    try:
-        f = open('%s.test'%(tag), 'w')
-        print >> pbc_i.print_basis()
-        f.close()
-        status='[PASSED]'.rjust(term_width-rshift)
-    except:
-        status='[FAILED]'.rjust(term_width-rshift)
-    if( os.system("diff %s.test %s.out"%(tag,tag)) ):
-        status='[FAILED]'.rjust(term_width-rshift) 
-    print "%s %s %s"%(tag,command,status)
-    test_list.append([tag,command,status.strip()])
-
-
-    command='pbc_i.print_r()'
-    tag='print_r_1'
-    rshift=len(tag)+len(command)
-    try:
-        r_i = np.array([99.03,77.8,66.7])
-        f = open('%s.test'%(tag), 'w')
-        print >> pbc_i.print_r(r_i)
-        f.close()
-        status='[PASSED]'.rjust(term_width-rshift)
-    except:
-        status='[FAILED]'.rjust(term_width-rshift)
-    if( os.system("diff %s.test %s.out"%(tag,tag)) ):
-        status='[FAILED]'.rjust(term_width-rshift) 
-    print "%s %s %s"%(tag,command,status)
-    test_list.append([tag,command,status.strip()])
-
-
-    command='pbc_i.return_r(r_i)'
-    tag='return_r_1'
+    command='pbc_i.set_basis()'
+    tag='set_basis_2'
     rshift=len(tag)+len(command)
     try:
 
-        r_i = np.array([0.00002324213,324554332.8,53543.7])
-        r_j = pbc_i.return_r(r_i)
-        print "r_j",r_j
+        basis_i = pbc_i.return_basis()
         f = open('%s.test'%(tag), 'w')
-        f.write(" r_i %g %g %g  "%(r_i[0],r_i[1],r_i[2]))
-        f.write("\n r_j %g %g %g  "%(r_j[0],r_j[1],r_j[2]))
+        for n in range(3):
+            f.write(" Basis_o %d  [ %f %f %f ] \n"%(n+1,basis_i[n,0],basis_i[n,1],basis_i[n,2]))
+        # Set local basis to new values
+        basis_i[0,0]=120.0
+        basis_i[1,1]=110.0
+        basis_i[2,2]=130.0
+
+        # Set lattice vectors to new values 
+        pbc_i.set_basis(basis_i)
+        for n in range(3):
+            f.write(" Basis_i %d  [ %f %f %f ] \n"%(n+1,basis_i[n,0],basis_i[n,1],basis_i[n,2]))
         f.close()
         status='[PASSED]'.rjust(term_width-rshift)
     except:
         status='[FAILED]'.rjust(term_width-rshift)
-    if( os.system("diff %s.test %s.out"%(tag,tag)) ):
+    if( os.system("diff %s.test %s.ref"%(tag,tag)) ):
         status='[FAILED]'.rjust(term_width-rshift) 
     print "%s %s %s"%(tag,command,status)
     test_list.append([tag,command,status.strip()])
 
 
-    command='pbc_i.delta_r(r_i,r_j)'
-    tag='delta_r_1'
+    command='pbc_i.delta_npos()'
+    tag='delta_npos_2'
     rshift=len(tag)+len(command)
     try:
-        r_i = np.array([0.00002324213,324554332.8,53543.7])
-        r_j = np.array([99.03,77.8,66.7])
-        dr_ij = pbc_i.delta_r(r_i,r_j)
-        print "dr_ij",dr_ij
+        basis_i = pbc_i.return_basis()
+
+        npos_i = []
+        npos_i.append(np.array([75.0,95.0,15.0], dtype='float64'))
+        npos_i.append(np.array([-85.0,75.0,25.0], dtype='float64'))
+        npos_i.append(np.array([-96.0,-68.0,33.0], dtype='float64'))
+        npos_i.append(np.array([-85.0,-38.0,-78.0], dtype='float64'))
+        npos_j = []
+        npos_j.append(np.array([-101.0,-152.0,-45.0], dtype='float64'))
+        npos_j.append(np.array([-64.0,-32.0,131.0], dtype='float64'))
+        npos_j.append(np.array([-48.0,377.0,77.0], dtype='float64'))
+        npos_j.append(np.array([12.0,152.0,45.0], dtype='float64'))
+        npos_ij,nd_ij = pbc_i.delta_npos(npos_i,npos_j)
+
         f = open('%s.test'%(tag), 'w')
-        f.write("\n r_i %g %g %g  "%(r_i[0],r_i[1],r_i[2]))
-        f.write("\n r_j %g %g %g  "%(r_j[0],r_j[1],r_j[2]))
-        f.write("\n dr_ij %g %g %g  "%(dr_ij[0],dr_ij[1],dr_ij[2]))
-        f.write("\n")
+        for n in range(3):
+            f.write(" Basis_o %d  [ %f %f %f ] \n"%(n+1,basis_i[n,0],basis_i[n,1],basis_i[n,2]))        
+        for n in range(len(npos_i)):
+            pos_i = npos_i[n]
+            f.write(" pos_i %d  [ %f %f %f ] \n"%(n+1,pos_i[0],pos_i[1],pos_i[2]))
+        for n in range(len(npos_j)):
+            pos_j = npos_j[n]
+            f.write(" pos_j %d  [ %f %f %f ]  \n"%(n+1,pos_j[0],pos_j[1],pos_j[2]))
+
+        for n in range(len(npos_i)):
+            for m in range(len(npos_j)):
+                pos_ij = npos_ij[n][m]
+                f.write(" pos_ij %d %d [ %f %f %f ] | %f | \n"%(n+1,m+1,pos_ij[0],pos_ij[1],pos_ij[2],nd_ij[n][m]))
         f.close()
         status='[PASSED]'.rjust(term_width-rshift)
     except:
         status='[FAILED]'.rjust(term_width-rshift)
-    print "diff %s.test %s.out"%(tag,tag)
-    diff_out = os.system("diff %s.test %s.out"%(tag,tag))
-    print "diff_out",diff_out
-    if( diff_out ):
+    if( os.system("diff %s.test %s.ref"%(tag,tag)) ):
         status='[FAILED]'.rjust(term_width-rshift) 
     print "%s %s %s"%(tag,command,status)
     test_list.append([tag,command,status.strip()])
 
+
+    command='pbc_i.delta_npos()'
+    tag='delta_npos_3'
+    rshift=len(tag)+len(command)
+    try:
+        basis_i = pbc_i.return_basis()
+
+        npos_i = []
+        npos_i.append(np.array([75.0,95.0,15.0], dtype='float64'))
+        npos_i.append(np.array([-85.0,75.0,25.0], dtype='float64'))
+        npos_i.append(np.array([-96.0,-68.0,33.0], dtype='float64'))
+        npos_i.append(np.array([-85.0,-38.0,-78.0], dtype='float64'))
+        npos_j = npos_i
+        npos_ij,nd_ij = pbc_i.delta_npos(npos_i,npos_j)
+
+        f = open('%s.test'%(tag), 'w')
+        for n in range(3):
+            f.write(" Basis_o %d  [ %f %f %f ] \n"%(n+1,basis_i[n,0],basis_i[n,1],basis_i[n,2]))        
+        for n in range(len(npos_i)):
+            pos_i = npos_i[n]
+            f.write(" pos_i %d  [ %f %f %f ] \n"%(n+1,pos_i[0],pos_i[1],pos_i[2]))
+        for n in range(len(npos_j)):
+            pos_j = npos_j[n]
+            f.write(" pos_j %d  [ %f %f %f ]  \n"%(n+1,pos_j[0],pos_j[1],pos_j[2]))
+
+        for n in range(len(npos_i)):
+            for m in range(len(npos_j)):
+                pos_ij = npos_ij[n][m]
+                f.write(" pos_ij %d %d [ %f %f %f ] | %f | \n"%(n+1,m+1,pos_ij[0],pos_ij[1],pos_ij[2],nd_ij[n][m]))
+        f.close()
+        status='[PASSED]'.rjust(term_width-rshift)
+    except:
+        status='[FAILED]'.rjust(term_width-rshift)
+    if( os.system("diff %s.test %s.ref"%(tag,tag)) ):
+        status='[FAILED]'.rjust(term_width-rshift) 
+    print "%s %s %s"%(tag,command,status)
+    test_list.append([tag,command,status.strip()])
 
     tests_status = '[PASSED]'
     for tag,command,status in test_list:
@@ -266,6 +272,10 @@ def main():
 
     print "\n          Testing of %s module  %s"%(mod_name,tests_status)
 
+    update_ref = False  
+    for tag,command,status in test_list:
+        os.system("cp %s.test %s.ref"%(tag,tag))
+        
     sys.exit(0)
 
 if __name__=="__main__":
